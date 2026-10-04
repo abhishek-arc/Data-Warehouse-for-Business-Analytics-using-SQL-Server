@@ -93,39 +93,45 @@ How the tables connect:
 ## Project structure
 
 ```
-├── datasets/
-│   ├── source_crm/                 cust_info, prd_info, sales_details
-│   └── source_erp/                 CUST_AZ12, LOC_A101, PX_CAT_G1V2
-├── scripts/
-│   ├── init_database.sql           creates the database and schemas
+├── datasets/                          raw source data (CSV)
+│   ├── README.md                      description of every file and column
+│   ├── source_crm/                    cust_info, prd_info, sales_details
+│   └── source_erp/                    CUST_AZ12, LOC_A101, PX_CAT_G1V2
+├── docs/
+│   ├── data_catalog.md                columns of the gold star schema
+│   └── naming_conventions.md          naming rules for tables, columns, procedures
+├── scripts/                           numbered in run order
+│   ├── 00_init_database.sql           creates the database and schemas
 │   ├── bronze/
-│   │   ├── ddl_bronze.sql          bronze tables
-│   │   └── load_bronze.sql         procedure bronze.load_bronze
+│   │   ├── 01_ddl_bronze.sql          bronze tables
+│   │   └── 02_load_bronze.sql         procedure bronze.load_bronze
 │   ├── silver/
-│   │   ├── ddl_silver.sql          silver tables
-│   │   └── load_silver.sql         procedure silver.load_silver
+│   │   ├── 03_ddl_silver.sql          silver tables
+│   │   └── 04_load_silver.sql         procedure silver.load_silver
 │   └── gold/
-│       └── ddl_gold.sql            star schema views
+│       └── 05_ddl_gold.sql            star schema views
 ├── tests/
-│   ├── quality_checks_silver.sql
-│   └── quality_checks_gold.sql
+│   ├── quality_checks_silver.sql      data quality checks after the silver load
+│   └── quality_checks_gold.sql        integrity checks on the star schema
 └── analysis/
-    └── business_analysis.sql       example business questions
+    └── business_analysis.sql          example business questions
 ```
+
+See [datasets/README.md](datasets/README.md) for the source files and [docs/data_catalog.md](docs/data_catalog.md) for the gold layer columns.
 
 ## How to run
 
 1. Install SQL Server (Express or Developer) and SSMS.
-2. In `scripts/bronze/load_bronze.sql`, change the file paths to where the `datasets` folder is on your machine.
-3. Run the scripts in this order:
+2. In `scripts/bronze/02_load_bronze.sql`, change the file paths to where the `datasets` folder is on your machine.
+3. Run the scripts in number order:
 
    ```
-   scripts/init_database.sql
-   scripts/bronze/ddl_bronze.sql
-   scripts/bronze/load_bronze.sql
-   scripts/silver/ddl_silver.sql
-   scripts/silver/load_silver.sql
-   scripts/gold/ddl_gold.sql
+   scripts/00_init_database.sql
+   scripts/bronze/01_ddl_bronze.sql
+   scripts/bronze/02_load_bronze.sql
+   scripts/silver/03_ddl_silver.sql
+   scripts/silver/04_load_silver.sql
+   scripts/gold/05_ddl_gold.sql
    ```
 
 4. Load the data:
